@@ -83,6 +83,9 @@ function myCallback() {
     analyser.getFloatTimeDomainData( buf );
     var ac = autoCorrelate( buf, audioCtx.sampleRate );
     const tone = document.getElementById("tone");
+    const greenBar = document.getElementsByClassName("greenBg")[0];
+    const redBarDown = document.getElementsByClassName("redBg down")[0];
+    const redBarUp = document.getElementsByClassName("redBg up")[0];
     // const toneArray = [{"tone": "E1", freq: 82.41},
     //                   {"tone": "F1", freq: 87.31},
     //                   {"tone": "F1#", freq: 92.5},
@@ -111,6 +114,14 @@ function myCallback() {
 
     console.log(ac);
     tone.innerHTML = getNoteFromFreq(ac);
+    let midiNumber = getMidiNumber(ac);
+    if(isTheRightPitch(midiNumber)){
+      greenBar.style.backgroundColor = "green";
+    }else if(midiNumber-Math.round(midiNumber) > 0){
+      redBarUp.style.backgroundColor = "red";
+    }else if(midiNumber-Math.round(midiNumber) < 0){
+      redBarDown.style.backgroundColor = "red";
+    }
 
 }
 
@@ -118,53 +129,65 @@ function getNoteFromFreq (freq){
 
   let note = "";
   // let i = 0;
-  const midiArray = [{"tone": "E1", midi: 40},
-                    {"tone": "F1", midi: 41},
-                    {"tone": "F1#", midi: 42},
-                    {"tone": "G1", midi: 43},
-                    {"tone": "G1#", midi: 44},
-                    {"tone": "A1", midi: 45},
-                    {"tone": "A1#", midi: 46},
-                    {"tone": "B1", midi: 47},
-                    {"tone": "C2", midi: 48},
-                    {"tone": "C2#", midi: 49},
-                    {"tone": "D2", midi: 50},
-                    {"tone": "D2#", midi: 51},
-                    {"tone": "E2", midi: 52},
-                    {"tone": "F2", midi: 53},
-                    {"tone": "F2#", midi: 54},
-                    {"tone": "G2", midi: 55},
-                    {"tone": "G2#", midi: 56},
-                    {"tone": "A2", midi: 57},
-                    {"tone": "A2#", midi: 58},
-                    {"tone": "B2", midi: 59},
-                    {"tone": "C3", midi: 60},
-                    {"tone": "C3#", midi: 61},
-                    {"tone": "D3", midi: 62},
-                    {"tone": "D3#", midi: 63},
-                    {"tone": "E3", midi: 64}];
+  // const midiArray = [{"tone": "E1", midi: 40},
+  //                   {"tone": "F1", midi: 41},
+  //                   {"tone": "F1#", midi: 42},
+  //                   {"tone": "G1", midi: 43},
+  //                   {"tone": "G1#", midi: 44},
+  //                   {"tone": "A1", midi: 45},
+  //                   {"tone": "A1#", midi: 46},
+  //                   {"tone": "B1", midi: 47},
+  //                   {"tone": "C2", midi: 48},
+  //                   {"tone": "C2#", midi: 49},
+  //                   {"tone": "D2", midi: 50},
+  //                   {"tone": "D2#", midi: 51},
+  //                   {"tone": "E2", midi: 52},
+  //                   {"tone": "F2", midi: 53},
+  //                   {"tone": "F2#", midi: 54},
+  //                   {"tone": "G2", midi: 55},
+  //                   {"tone": "G2#", midi: 56},
+  //                   {"tone": "A2", midi: 57},
+  //                   {"tone": "A2#", midi: 58},
+  //                   {"tone": "B2", midi: 59},
+  //                   {"tone": "C3", midi: 60},
+  //                   {"tone": "C3#", midi: 61},
+  //                   {"tone": "D3", midi: 62},
+  //                   {"tone": "D3#", midi: 63},
+  //                   {"tone": "E3", midi: 64}];
 
   // while(i < arr.length && freq >= arr[i].freq){
-    // note = arr[i].tone;
+    // note = arr[i].to
     // i++;
   // }                                        //freq = fm = ac
   let midiNumber = Math.round(12*Math.log2(freq/440) + 69);//midi number of closest note
   // Math.pow(2, (midiNumber-69)/12)*440;
 
-  for(let i = 1 ; i < midiArray.length-1 ; i++){
-      if(midiNumber < midiArray[i].midi + (midiArray[1].midi-midiArray[0].midi)/2 && midiNumber > midiArray[i].midi - (midiArray[1].midi-midiArray[0].midi)/2){
-        note = midiArray[i].tone;
-      }
-  }
-  if(midiNumber < midiArray[0].midi + (midiArray[1].midi-midiArray[0].midi)/2 && midiNumber > midiArray[0].midi - (midiArray[1].midi-midiArray[0].midi)/2){
-    note = midiArray[0].tone;
-  }else if (midiNumber > midiArray[midiArray.length-1].midi - (midiArray[1].midi-midiArray[0].midi)/2 
-            && midiNumber < midiArray[midiArray.length-1].midi + (midiArray[1].midi-midiArray[0].midi)/2){
-    note = midiArray[midiArray.length-1];
-  }
+  // for(let i = 1 ; i < midiArray.length-1 ; i++){
+  //     if(midiNumber < midiArray[i].midi + (midiArray[1].midi-midiArray[0].midi)/2 && midiNumber > midiArray[i].midi - (midiArray[1].midi-midiArray[0].midi)/2){
+  //       note = midiArray[i].tone;
+  //     }
+  // }
+  // if(midiNumber < midiArray[0].midi + (midiArray[1].midi-midiArray[0].midi)/2 && midiNumber > midiArray[0].midi - (midiArray[1].midi-midiArray[0].midi)/2){
+  //   note = midiArray[0].tone;
+  // }else if (midiNumber > midiArray[midiArray.length-1].midi - (midiArray[1].midi-midiArray[0].midi)/2 
+  //           && midiNumber < midiArray[midiArray.length-1].midi + (midiArray[1].midi-midiArray[0].midi)/2){
+  //   note = midiArray[midiArray.length-1];
+  // }
+  const noteArray = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  note = noteArray[midiNumber%12];
   return note;
 }
 
 
+function isTheRightPitch (isPerfectNote){
+  const precisionPitch = 0.05;
+  return Math.abs(isPerfectNote-Math.round(isPerfectNote)) <= precisionPitch;
+}
+
+function getMidiNumber(freq){
+  return 12*Math.log2(freq/440) + 69;
+}
+
 
 console.log("hello");
+
