@@ -184,7 +184,7 @@ function getNoteFromFreq (freq){
 
 
 function isTheRightPitch (isPerfectNote){
-  const precisionPitch = 0.05;
+  const precisionPitch = 0.07;
   return Math.abs(isPerfectNote-Math.round(isPerfectNote)) <= precisionPitch;
 }
 
