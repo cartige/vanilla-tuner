@@ -7,6 +7,7 @@ navigator.mediaDevices.getUserMedia(constraints)
   audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(stream);
   analyser = audioCtx.createAnalyser();
+  analyser.smoothingTimeConstant = 1;
 
   analyser.fftSize = 2048*2;
 
@@ -19,7 +20,7 @@ navigator.mediaDevices.getUserMedia(constraints)
 
   source.connect(analyser);
   // Will execute myCallback every 0.5 seconds 
-  var intervalID = window.setInterval(()=>requestAnimationFrame(myCallback), 50);
+  requestAnimationFrame(myCallback);
   
   console.log("hello dans mon then");
 })
@@ -40,7 +41,7 @@ function autoCorrelate( buf, sampleRate ) {
       rms += val*val;
   }
   rms = Math.sqrt(rms/SIZE);
-  if (rms<0.01) // not enough signal
+  if (rms<0.001) // not enough signal
       return -1;
 
   var r1=0, r2=SIZE-1, thres=0.2;
@@ -109,10 +110,10 @@ function myCallback() {
     //   myColorLeft = "red";
     // } 
     greenBar.style.backgroundColor = isTheRightPitch(midiNumber) ? "green" : "white";
-    redBarDown.style.backgroundColor = midiNumberDecimal < 0 ? "red" : "white";
-    redBarUp.style.backgroundColor = midiNumberDecimal > 0 ? "red" : "white";
-    tunerArrow.style.left = `${midiNumberDecimal*100}%`;
-    // requestAnimationFrame(myCallback);
+    redBarDown.style.backgroundColor = midiNumberDecimal < -0.05 ? "red" : "white";
+    redBarUp.style.backgroundColor = midiNumberDecimal > 0.05 ? "red" : "white";
+    tunerArrow.style.left = ac < 0 ? "0%" : `${midiNumberDecimal*100}%`;
+    requestAnimationFrame(myCallback);
 
 }
 
@@ -122,7 +123,7 @@ function getNoteFromFreq (freq){
                                        //freq = fm = ac
   let midiNumber = Math.round(12*Math.log2(freq/440) + 69);//midi number of closest note
   // Math.pow(2, (midiNumber-69)/12)*440;
-  if(freq === -1){
+  if(freq < 0){
     note = "Play a String";
   }else {
     const noteArray = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
