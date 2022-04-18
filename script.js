@@ -119,8 +119,14 @@ function myCallback() {
       greenBar.style.backgroundColor = "green";
     }else if(midiNumber-Math.round(midiNumber) > 0){
       redBarUp.style.backgroundColor = "red";
+      if(redBarDown.style.backgroundColor = "red"){
+        redBarDown.style.backgroundColor = "white";
+      }
     }else if(midiNumber-Math.round(midiNumber) < 0){
       redBarDown.style.backgroundColor = "red";
+      if(redBarUp.style.backgroundColor = "red"){
+        redBarUp.style.backgroundColor = "white";
+      }
     }else{
       redBarDown.style.backgroundColor = "white";
       redBarUp.style.backgroundColor = "white";
