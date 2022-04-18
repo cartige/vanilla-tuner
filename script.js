@@ -19,7 +19,7 @@ navigator.mediaDevices.getUserMedia(constraints)
 
   source.connect(analyser);
   // Will execute myCallback every 0.5 seconds 
-  var intervalID = window.setInterval(()=>requestAnimationFrame(myCallback), 700);
+  var intervalID = window.setInterval(()=>requestAnimationFrame(myCallback), 50);
   
   console.log("hello dans mon then");
 })
@@ -89,26 +89,29 @@ function myCallback() {
     const greenBar = document.getElementsByClassName("greenBg")[0];
     const redBarDown = document.getElementsByClassName("redBg down")[0];
     const redBarUp = document.getElementsByClassName("redBg up")[0];
+    const tunerArrow = document.getElementById("tunerArrow");
 
     console.log(ac);
     tone.innerHTML = getNoteFromFreq(ac);
     let midiNumber = getMidiNumber(ac);
-    let myColorMiddle = "white";
-    let myColorLeft = "white";
-    let myColorRight = "white";
+    let midiNumberDecimal = midiNumber-Math.round(midiNumber);
+    // let myColorMiddle = "white";
+    // let myColorLeft = "white";
+    // let myColorRight = "white";
 
-    if(isTheRightPitch(midiNumber)){
-      myColorMiddle = "green";
-    }
-    if(midiNumber-Math.round(midiNumber) > 0){
-      myColorRight = "red";
-    }
-    if(midiNumber-Math.round(midiNumber) < 0){
-      myColorLeft = "red";
-    }
-    greenBar.style.backgroundColor = myColorMiddle;
-    redBarDown.style.backgroundColor = myColorLeft;
-    redBarUp.style.backgroundColor = myColorRight;
+    // if(isTheRightPitch(midiNumber)){
+    //   myColorMiddle = "green";
+    // }
+    // if(midiNumberDecimal > 0){
+    //   myColorRight = "red";
+    // }
+    // if(midiNumberDecimal < 0){
+    //   myColorLeft = "red";
+    // } 
+    greenBar.style.backgroundColor = isTheRightPitch(midiNumber) ? "green" : "white";
+    redBarDown.style.backgroundColor = midiNumberDecimal < 0 ? "red" : "white";
+    redBarUp.style.backgroundColor = midiNumberDecimal > 0 ? "red" : "white";
+    tunerArrow.style.left = `${midiNumberDecimal*100}%`;
     // requestAnimationFrame(myCallback);
 
 }
