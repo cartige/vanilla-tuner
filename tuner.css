@@ -12,7 +12,8 @@
     background-color: grey;
     border-style: solid;
     margin: 0 auto;
-    z-index: -1;
+    padding-bottom: 110px;
+    /* z-index: -1; */
 }
 
 ul li {
@@ -54,9 +55,21 @@ main {
     background-color: white;
 }
 
+
 #tone {
     color: rgb(0, 0, 0);
     text-align: center;
     position: relative;
-    top: 25px;
+    bottom: 50px;
+}
+
+#tunerArrow {
+    width: 7px;
+    border-width: 2px;
+    border-color: rgb(0, 0, 0);
+    height: 150px;
+    margin: 0 auto;
+    background-color: rgb(0, 0, 0);
+    position: relative;
+    bottom: 70px;
 }

@@ -7,6 +7,7 @@ navigator.mediaDevices.getUserMedia(constraints)
   audioCtx = new AudioContext();
   var source = audioCtx.createMediaStreamSource(stream);
   analyser = audioCtx.createAnalyser();
+  analyser.smoothingTimeConstant = 1;
 
   analyser.fftSize = 2048*2;
 
@@ -19,7 +20,7 @@ navigator.mediaDevices.getUserMedia(constraints)
 
   source.connect(analyser);
   // Will execute myCallback every 0.5 seconds 
-  var intervalID = window.setInterval(()=>requestAnimationFrame(myCallback), 700);
+  requestAnimationFrame(myCallback);
   
   console.log("hello dans mon then");
 })
@@ -40,7 +41,7 @@ function autoCorrelate( buf, sampleRate ) {
       rms += val*val;
   }
   rms = Math.sqrt(rms/SIZE);
-  if (rms<0.01) // not enough signal
+  if (rms<0.001) // not enough signal
       return -1;
 
   var r1=0, r2=SIZE-1, thres=0.2;
@@ -89,27 +90,30 @@ function myCallback() {
     const greenBar = document.getElementsByClassName("greenBg")[0];
     const redBarDown = document.getElementsByClassName("redBg down")[0];
     const redBarUp = document.getElementsByClassName("redBg up")[0];
+    const tunerArrow = document.getElementById("tunerArrow");
 
     console.log(ac);
     tone.innerHTML = getNoteFromFreq(ac);
     let midiNumber = getMidiNumber(ac);
-    let myColorMiddle = "white";
-    let myColorLeft = "white";
-    let myColorRight = "white";
+    let midiNumberDecimal = midiNumber-Math.round(midiNumber);
+    // let myColorMiddle = "white";
+    // let myColorLeft = "white";
+    // let myColorRight = "white";
 
-    if(isTheRightPitch(midiNumber)){
-      myColorMiddle = "green";
-    }
-    if(midiNumber-Math.round(midiNumber) > 0){
-      myColorRight = "red";
-    }
-    if(midiNumber-Math.round(midiNumber) < 0){
-      myColorLeft = "red";
-    }
-    greenBar.style.backgroundColor = myColorMiddle;
-    redBarDown.style.backgroundColor = myColorLeft;
-    redBarUp.style.backgroundColor = myColorRight;
-    // requestAnimationFrame(myCallback);
+    // if(isTheRightPitch(midiNumber)){
+    //   myColorMiddle = "green";
+    // }
+    // if(midiNumberDecimal > 0){
+    //   myColorRight = "red";
+    // }
+    // if(midiNumberDecimal < 0){
+    //   myColorLeft = "red";
+    // } 
+    greenBar.style.backgroundColor = isTheRightPitch(midiNumber) ? "green" : "white";
+    redBarDown.style.backgroundColor = midiNumberDecimal < -0.05 ? "red" : "white";
+    redBarUp.style.backgroundColor = midiNumberDecimal > 0.05 ? "red" : "white";
+    tunerArrow.style.left = ac < 0 ? "0%" : `${midiNumberDecimal*100}%`;
+    requestAnimationFrame(myCallback);
 
 }
 
@@ -119,7 +123,7 @@ function getNoteFromFreq (freq){
                                        //freq = fm = ac
   let midiNumber = Math.round(12*Math.log2(freq/440) + 69);//midi number of closest note
   // Math.pow(2, (midiNumber-69)/12)*440;
-  if(freq === -1){
+  if(freq < 0){
     note = "Play a String";
   }else {
     const noteArray = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
