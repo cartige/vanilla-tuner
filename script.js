@@ -127,7 +127,7 @@ function getNoteFromFreq (freq){
     note = "Play a String";
   }else {
     const noteArray = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-    note = noteArray[midiNumber%12] + Math.floor(midiNumber/12);
+    note = noteArray[midiNumber%12] + Math.floor(midiNumber/12)-1;
   }
 
   return note;
