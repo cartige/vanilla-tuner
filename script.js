@@ -9,7 +9,7 @@ navigator.mediaDevices.getUserMedia(constraints)
   analyser = audioCtx.createAnalyser();
   analyser.smoothingTimeConstant = 1;
 
-  analyser.fftSize = 2048*2;
+  analyser.fftSize = 2048;
 
   console.log(analyser.fftSize);
 
