@@ -73,8 +73,9 @@ function autoCorrelate( buf, sampleRate ) {
   return sampleRate/T0;
 }
 
-// Will execute myCallback every 0.5 seconds 
-var intervalID = window.setInterval(myCallback, 1000);
+
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 function myCallback() {
     var dataArray = new Uint8Array(analyser.frequencyBinCount); // Uint8Array should be the same length as the frequencyBinCount
@@ -115,23 +116,39 @@ function myCallback() {
     console.log(ac);
     tone.innerHTML = getNoteFromFreq(ac);
     let midiNumber = getMidiNumber(ac);
+    let myColorMiddle = "white";
+    let myColorLeft = "white";
+    let myColorRight = "white";
+    // if(isTheRightPitch(midiNumber)){
+    //   greenBar.style.backgroundColor = "green";
+    // }else if(midiNumber-Math.round(midiNumber) > 0){
+    //   redBarUp.style.backgroundColor = "red";
+    //   if(redBarDown.style.backgroundColor = "red"){
+    //     redBarDown.style.backgroundColor = "white";
+    //   }
+    // }else if(midiNumber-Math.round(midiNumber) < 0){
+    //   redBarDown.style.backgroundColor = "red";
+    //   if(redBarUp.style.backgroundColor = "red"){
+    //     redBarUp.style.backgroundColor = "white";
+    //   }
+    // }else{
+    //   redBarDown.style.backgroundColor = "white";
+    //   redBarUp.style.backgroundColor = "white";
+      
+    // }
     if(isTheRightPitch(midiNumber)){
-      greenBar.style.backgroundColor = "green";
-    }else if(midiNumber-Math.round(midiNumber) > 0){
-      redBarUp.style.backgroundColor = "red";
-      if(redBarDown.style.backgroundColor = "red"){
-        redBarDown.style.backgroundColor = "white";
-      }
-    }else if(midiNumber-Math.round(midiNumber) < 0){
-      redBarDown.style.backgroundColor = "red";
-      if(redBarUp.style.backgroundColor = "red"){
-        redBarUp.style.backgroundColor = "white";
-      }
-    }else{
-      redBarDown.style.backgroundColor = "white";
-      redBarUp.style.backgroundColor = "white";
-      greenBar.style.backgroundColor = "white";
+      myColorMiddle = "green";
     }
+    if(midiNumber-Math.round(midiNumber) > 0){
+      myColorRight = "red";
+    }
+    if(midiNumber-Math.round(midiNumber) < 0){
+      myColorLeft = "red";
+    }
+    greenBar.style.backgroundColor = myColorMiddle;
+    redBarDown.style.backgroundColor = myColorLeft;
+    redBarUp.style.backgroundColor = myColorRight;
+    requestAnimationFrame(myCallback);
 
 }
 
@@ -197,6 +214,9 @@ function isTheRightPitch (isPerfectNote){
 function getMidiNumber(freq){
   return 12*Math.log2(freq/440) + 69;
 }
+
+// Will execute myCallback every 0.5 seconds 
+var intervalID = window.setInterval(requestAnimationFrame(myCallback), 2000);
 
 
 console.log("hello");
